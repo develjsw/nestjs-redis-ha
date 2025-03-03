@@ -1,33 +1,44 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  redis-node1:
-    image: redis:latest
-    container_name: redis-node1
-    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+  redis-node-1:
+    image: redis
+    container_name: redis-node-1
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-1.conf:/usr/local/etc/redis/redis.conf
     ports:
+      # Redis 기본 포트 (클라이언트 연결용)
       - "7001:6379"
+      # 클러스터 통신용 포트 (Redis 노드 간 통신용)
+      - "17001:16379"
     networks:
-      - redis-cluster-network
+      - redis-cluster
 
-  redis-node2:
-    image: redis:latest
-    container_name: redis-node2
-    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+  redis-node-2:
+    image: redis
+    container_name: redis-node-2
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-2.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "7002:6379"
+      - "17002:16379"
     networks:
-      - redis-cluster-network
+      - redis-cluster
 
-  redis-node3:
-    image: redis:latest
-    container_name: redis-node3
-    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+  redis-node-3:
+    image: redis
+    container_name: redis-node-3
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis-3.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "7003:6379"
+      - "17003:16379"
     networks:
-      - redis-cluster-network
+      - redis-cluster
 
 networks:
-  redis-cluster-network:
+  redis-cluster:
     driver: bridge
